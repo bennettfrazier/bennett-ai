@@ -1,0 +1,417 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 98%;
+    --foreground: 0 0% 12%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 12%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 12%;
+
+    --primary: 160 84% 39%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 45%;
+
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
+
+    --accent: 160 84% 39%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 160 84% 39%;
+
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 222 14% 10%;
+    --foreground: 210 20% 98%;
+
+    --card: 224 16% 12%;
+    --card-foreground: 210 20% 98%;
+
+    --popover: 224 16% 12%;
+    --popover-foreground: 210 20% 98%;
+
+    --primary: 160 84% 39%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 226 12% 18%;
+    --secondary-foreground: 210 15% 85%;
+
+    --muted: 226 12% 18%;
+    --muted-foreground: 215 15% 65%;
+
+    --accent: 160 84% 39%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 224 16% 20%;
+    --input: 224 16% 20%;
+    --ring: 160 84% 39%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground transition-colors duration-300 font-light;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-semibold;
+  }
+  svg {
+    @apply fill-current;
+  }
+}
+
+/* Mobile-specific font sizing */
+@media screen and (-webkit-min-device-pixel-ratio: 2), screen and (min-resolution: 192dpi) {
+  html {
+    font-size: 112.5%; /* Increase base font size by 12.5% on high-density displays */
+  }
+}
+
+/* Fixed layout for mobile using flexbox */
+.mobile-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /* Fallback */
+  height: 100dvh; /* Dynamic viewport height */
+  overflow: hidden;
+}
+
+.mobile-header {
+  flex: 0 0 auto; /* Don't grow, don't shrink, auto basis */
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  width: 100%;
+}
+
+.mobile-content {
+  flex: 1 1 auto; /* Grow, shrink, auto basis */
+  overflow-y: auto;
+  min-height: 0; /* Important for Firefox */
+  padding-bottom: 16px; /* Add some padding at the bottom */
+}
+
+.mobile-footer {
+  flex: 0 0 auto; /* Don't grow, don't shrink, auto basis */
+  position: relative; /* Changed from fixed to work with flexbox */
+  z-index: 10;
+  width: 100%;
+  background-color: hsl(var(--background));
+  border-top: 1px solid hsl(var(--border));
+  padding-bottom: env(safe-area-inset-bottom, 0.5rem);
+}
+
+/* Safe area padding for mobile devices */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0.5rem);
+}
+
+/* Glass input styling */
+.glass-input-container {
+  @apply relative w-full overflow-hidden rounded-2xl;
+  background: hsl(var(--card));
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  border: 1px solid hsl(var(--border));
+  backdrop-filter: blur(8px);
+  transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
+}
+
+.glass-input {
+  @apply w-full border-none bg-transparent text-foreground focus-visible:ring-0 focus-visible:ring-offset-0;
+  box-shadow: none !important;
+  transition: color 0.3s;
+}
+
+.dark .glass-input-container {
+  background: rgba(30, 30, 35, 0.5);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(60, 60, 70, 0.5);
+}
+
+/* Welcome message animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Fix avatar alignment */
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Modern typing indicator */
+.typing-indicator {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.typing-indicator span {
+  width: 6px;
+  height: 6px;
+  @apply bg-primary;
+  border-radius: 50%;
+  display: inline-block;
+  opacity: 0.6;
+}
+
+.typing-indicator span:nth-child(1) {
+  animation: bounce 1.2s infinite 0.2s;
+}
+
+.typing-indicator span:nth-child(2) {
+  animation: bounce 1.2s infinite 0.4s;
+}
+
+.typing-indicator span:nth-child(3) {
+  animation: bounce 1.2s infinite 0.6s;
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translateY(-3px);
+    opacity: 1;
+  }
+}
+
+/* Theme toggle animation - remove transitions for icons */
+.theme-toggle {
+  @apply relative;
+}
+
+.theme-toggle > * {
+  @apply absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2;
+  transition: transform 0.15s ease, opacity 0.15s ease !important;
+}
+
+/* Theme toggle icon transitions */
+.theme-toggle svg {
+  transition: transform 0.15s ease, opacity 0.15s ease !important;
+}
+
+/* Reasoning container animation */
+.reasoning-container {
+  transition: max-height 0.3s ease-in-out, opacity 0.2s ease-in-out;
+}
+
+/* Mobile message bubbles */
+.message-bubble {
+  @apply p-3 rounded-2xl;
+}
+
+.message-bubble.user {
+  @apply bg-secondary text-secondary-foreground ml-auto;
+  max-width: 85%;
+}
+
+.message-bubble.assistant {
+  @apply bg-card border border-border shadow-sm text-card-foreground w-full;
+}
+
+/* Markdown styling based on Google's style guide */
+.markdown-content {
+  @apply text-foreground leading-normal text-sm;
+}
+
+.markdown-content p {
+  @apply mb-4 last:mb-0;
+}
+
+.markdown-content h1 {
+  @apply text-2xl font-semibold mt-6 mb-4 leading-tight text-foreground;
+  border-bottom: 1px solid hsl(var(--border));
+  padding-bottom: 0.3em;
+}
+
+.markdown-content h2 {
+  @apply text-xl font-semibold mt-5 mb-3 leading-tight text-foreground;
+  border-bottom: 1px solid hsl(var(--border));
+  padding-bottom: 0.3em;
+}
+
+.markdown-content h3 {
+  @apply text-lg font-semibold mt-4 mb-2 leading-tight text-foreground;
+}
+
+.markdown-content h4 {
+  @apply text-base font-medium mt-3 mb-2 leading-tight text-foreground;
+}
+
+.markdown-content ul {
+  @apply list-disc pl-5 mb-4 space-y-2;
+}
+
+.markdown-content ol {
+  @apply list-decimal pl-5 mb-4 space-y-2;
+}
+
+.markdown-content li {
+  @apply mb-2;
+  display: list-item;
+}
+
+.markdown-content li p {
+  @apply mb-1;
+}
+
+.markdown-content li > ul,
+.markdown-content li > ol {
+  @apply mb-0 mt-2;
+}
+
+/* Special styling for lists in reasoning content */
+.reasoning-content ul,
+.reasoning-content ol {
+  @apply py-1 my-2;
+}
+
+.reasoning-content li {
+  @apply leading-tight py-0.5;
+  display: list-item;
+}
+
+.reasoning-content li > ul,
+.reasoning-content li > ol {
+  @apply my-1 py-0;
+}
+
+.markdown-content blockquote {
+  @apply pl-4 border-l-4 border-muted italic my-4 text-muted-foreground;
+  background-color: hsl(var(--muted) / 0.3);
+  padding: 0.5rem;
+  border-radius: 0 0.25rem 0.25rem 0;
+}
+
+.markdown-content pre {
+  @apply bg-muted p-3 rounded-lg overflow-x-auto my-4 text-xs;
+  border: 1px solid hsl(var(--border));
+}
+
+.markdown-content code {
+  @apply px-1.5 py-0.5 rounded text-xs font-mono;
+  background-color: hsl(var(--primary) / 0.1);
+  color: hsl(var(--primary));
+  border: 1px solid hsl(var(--primary) / 0.2);
+}
+
+.dark .markdown-content code {
+  background-color: hsl(var(--primary) / 0.2);
+  border: 1px solid hsl(var(--primary) / 0.3);
+}
+
+.markdown-content pre code {
+  @apply bg-transparent p-0 border-0 text-foreground;
+}
+
+.markdown-content a {
+  @apply text-primary hover:underline;
+}
+
+.markdown-content table {
+  @apply w-full border-collapse my-4 text-xs;
+  border: 1px solid hsl(var(--border));
+}
+
+.markdown-content th {
+  @apply bg-muted px-3 py-2 text-left font-semibold border border-border;
+}
+
+.markdown-content td {
+  @apply px-3 py-2 border border-border;
+}
+
+.markdown-content img {
+  @apply max-w-full h-auto rounded-lg my-4;
+  border: 1px solid hsl(var(--border));
+}
+
+.markdown-content hr {
+  @apply my-6 border-t border-border;
+}
+
+/* Highlight text styling */
+::selection {
+  background-color: hsl(var(--primary) / 0.2);
+  color: hsl(var(--primary));
+}
+
+/* Improved link styling */
+.markdown-content a:hover {
+  text-decoration: underline;
+  @apply text-primary/90;
+}
+
+/* Improved code block styling */
+.markdown-content pre {
+  @apply shadow-sm;
+}
+
+/* Improved table styling */
+.markdown-content table {
+  @apply shadow-sm;
+}
+
+.markdown-content th {
+  @apply bg-muted;
+}
+
+.markdown-content tr:nth-child(even) {
+  @apply bg-muted/50;
+}
+
+/* Dark mode transitions - only apply to specific elements */
+body,
+.glass-input-container,
+.glass-input,
+.markdown-content,
+.bg-background,
+.bg-card,
+.bg-muted,
+.border,
+.text-foreground,
+.text-muted-foreground {
+  @apply transition-colors duration-200;
+}
