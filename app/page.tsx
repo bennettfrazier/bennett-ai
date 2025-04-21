@@ -395,7 +395,7 @@ export default function ChatPage() {
                     <Textarea
                       value={input}
                       onChange={handleInputChange}
-                      placeholder="Message Claude..."
+                      placeholder="Message Bennett..."
                       className="min-h-[50px] resize-none glass-input"
                       onKeyDown={(e) => {
                         if (e.key === "Enter" && !e.shiftKey) {

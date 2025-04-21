@@ -260,24 +260,41 @@
   @apply mb-4 last:mb-0;
 }
 
+/* H1 styling - de-emphasized since we don't want to use it */
 .markdown-content h1 {
-  @apply text-2xl font-semibold mt-6 mb-4 leading-tight text-foreground;
-  border-bottom: 1px solid hsl(var(--border));
+  @apply text-lg font-semibold mt-6 mb-4 leading-tight text-foreground;
   padding-bottom: 0.3em;
 }
 
+/* H2 is now our primary heading at 1.25rem */
 .markdown-content h2 {
-  @apply text-xl font-semibold mt-5 mb-3 leading-tight text-foreground;
-  border-bottom: 1px solid hsl(var(--border));
+  @apply font-semibold mt-5 mb-3 leading-tight text-foreground;
+  font-size: 1.25rem;
   padding-bottom: 0.3em;
 }
 
+/* H3 steps down from H2 */
 .markdown-content h3 {
-  @apply text-lg font-semibold mt-4 mb-2 leading-tight text-foreground;
+  @apply font-semibold mt-4 mb-2 leading-tight text-foreground;
+  font-size: 1.125rem;
 }
 
+/* H4 steps down from H3 */
 .markdown-content h4 {
-  @apply text-base font-medium mt-3 mb-2 leading-tight text-foreground;
+  @apply font-medium mt-3 mb-2 leading-tight text-foreground;
+  font-size: 1rem;
+}
+
+/* H5 steps down from H4 */
+.markdown-content h5 {
+  @apply font-medium mt-3 mb-1 leading-tight text-foreground;
+  font-size: 0.875rem;
+}
+
+/* H6 steps down from H5 */
+.markdown-content h6 {
+  @apply font-medium mt-2 mb-1 leading-tight text-muted-foreground;
+  font-size: 0.875rem;
 }
 
 .markdown-content ul {

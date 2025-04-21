@@ -10,14 +10,21 @@ export async function POST(req: Request) {
       return new Response(JSON.stringify({ error: "ANTHROPIC_API_KEY is not set" }), { status: 500 })
     }
 
+    // Simple system message focused on being helpful
+    const systemMessage = `You are a helpful AI assistant. Focus on providing the most useful, clear, and accurate information to the user. Use whatever formatting makes your response most helpful and easy to understand.`
+
     // Stream the response from Claude
     const result = streamText({
       model: anthropic("claude-3-7-sonnet-20250219"),
       messages,
+      system: systemMessage,
       // Claude-specific options
       providerOptions: {
         anthropic: {
-          thinking: { type: "enabled", budgetTokens: 12000 },
+          thinking: {
+            type: "enabled",
+            budgetTokens: 12000,
+          },
         },
       },
     })
