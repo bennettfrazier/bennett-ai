@@ -1,5 +1,7 @@
 "use client"
 import { useChat } from "ai/react"
+import type React from "react"
+
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar } from "@/components/ui/avatar"
@@ -25,6 +27,7 @@ export default function ChatPage() {
   const [userHasScrolled, setUserHasScrolled] = useState(false)
   const prevLoadingRef = useRef(isLoading)
   const prevMessagesLengthRef = useRef(messages.length)
+  const lastMessageRef = useRef<string | null>(null)
   const { theme, setTheme, resolvedTheme } = useTheme()
   const isMobile = useMediaQuery("(max-width: 768px)")
 
@@ -58,39 +61,46 @@ export default function ChatPage() {
             [lastMessage.id]: false,
           }))
 
-          // Scroll to the top of the response if user hasn't scrolled
-          if (!userHasScrolled && messageRefs.current[lastMessage.id]) {
-            setTimeout(() => {
-              const headerHeight = 56 // Height of the fixed header
-              const messageEl = messageRefs.current[lastMessage.id]
-              if (messageEl) {
-                const messagePosition = messageEl.getBoundingClientRect().top
-                const scrollPosition = messagePosition + window.scrollY - headerHeight - 16 // 16px extra padding
-
-                contentRef.current?.scrollTo({
-                  top: scrollPosition,
-                  behavior: "smooth",
-                })
-              }
-            }, 300) // Small delay to allow for the collapse animation
-          }
+          // Scroll to the latest message
+          setTimeout(() => {
+            scrollToLatestMessage()
+          }, 300) // Small delay to allow for the collapse animation
         }, 1000) // 1 second delay before collapsing
       }
     }
 
     prevLoadingRef.current = isLoading
-  }, [isLoading, messages, completedMessages, userHasScrolled])
+  }, [isLoading, messages, completedMessages])
+
+  // Function to scroll to the latest message
+  const scrollToLatestMessage = () => {
+    if (messagesEndRef.current && contentRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth", block: "end" })
+    }
+  }
 
   // Auto-scroll to bottom when messages change
   useEffect(() => {
-    if (!userHasScrolled && messagesEndRef.current && contentRef.current) {
-      // Use scrollTo instead of scrollIntoView for more control
-      const scrollHeight = contentRef.current.scrollHeight
-      contentRef.current.scrollTo({
-        top: scrollHeight,
-        behavior: "smooth",
-      })
+    // Only auto-scroll if:
+    // 1. User hasn't manually scrolled up
+    // 2. A new message was added (not just updated)
+    // 3. The last message is from the user or we're loading a response
+    const shouldAutoScroll =
+      !userHasScrolled ||
+      messages.length > prevMessagesLengthRef.current ||
+      (messages.length > 0 && messages[messages.length - 1].role === "user") ||
+      isLoading
+
+    if (shouldAutoScroll && messagesEndRef.current) {
+      scrollToLatestMessage()
     }
+
+    // Track the last message ID to detect new messages
+    if (messages.length > 0) {
+      lastMessageRef.current = messages[messages.length - 1].id
+    }
+
+    prevMessagesLengthRef.current = messages.length
   }, [messages, isLoading, userHasScrolled])
 
   // Reset userHasScrolled when a new message is added
@@ -98,7 +108,6 @@ export default function ChatPage() {
     if (messages.length > prevMessagesLengthRef.current) {
       setUserHasScrolled(false)
     }
-    prevMessagesLengthRef.current = messages.length
   }, [messages.length])
 
   // Handle scroll events for main content
@@ -114,6 +123,8 @@ export default function ChatPage() {
 
       if (!isScrolledToBottom) {
         setUserHasScrolled(true)
+      } else {
+        setUserHasScrolled(false)
       }
     }
 
@@ -138,6 +149,23 @@ export default function ChatPage() {
       }
     }
   }, [messages, isLoading, expandedReasoning, userScrolledReasoning])
+
+  // Custom submit handler to ensure scroll to bottom
+  const handleMessageSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    if (!input.trim()) return
+
+    // Reset scroll state when submitting a new message
+    setUserHasScrolled(false)
+
+    // Call the original submit handler
+    handleSubmit(e)
+
+    // Scroll to bottom after a short delay to ensure the UI has updated
+    setTimeout(() => {
+      scrollToLatestMessage()
+    }, 100)
+  }
 
   // Extract reasoning from message parts
   const getReasoningFromMessage = (message: any) => {
@@ -244,7 +272,7 @@ export default function ChatPage() {
             <WelcomeScreen
               input={input}
               handleInputChange={handleInputChange}
-              handleSubmit={handleSubmit}
+              handleSubmit={handleMessageSubmit}
               isLoading={isLoading}
             />
           ) : (
@@ -389,7 +417,7 @@ export default function ChatPage() {
         <div className="mobile-footer">
           <Card className="border-none rounded-none shadow-none">
             <CardContent className="border-t bg-card p-4">
-              <form onSubmit={handleSubmit} className="flex w-full gap-2 max-w-3xl mx-auto">
+              <form onSubmit={handleMessageSubmit} className="flex w-full gap-2 max-w-3xl mx-auto">
                 <div className="relative flex-1">
                   <div className="glass-input-container">
                     <Textarea
@@ -401,7 +429,8 @@ export default function ChatPage() {
                         if (e.key === "Enter" && !e.shiftKey) {
                           e.preventDefault()
                           if (input.trim()) {
-                            handleSubmit(e as any)
+                            const form = e.currentTarget.form
+                            if (form) form.requestSubmit()
                           }
                         }
                       }}
