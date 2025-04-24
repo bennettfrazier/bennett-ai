@@ -1,30 +1,25 @@
-# Claude AI Clone
-
-*Automatically synced with your [v0.dev](https://v0.dev) deployments*
-
-[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/bennett-fraziers-projects/v0-claude-ai-clone)
-[![Built with v0](https://img.shields.io/badge/Built%20with-v0.dev-black?style=for-the-badge)](https://v0.dev/chat/projects/Og0eDHMaYNE)
+# Bennett AI
+[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/)
+[![Built with v0](https://img.shields.io/badge/Built%20with-v0.dev-black?style=for-the-badge)](https://v0.dev/)
 
 ## Overview
+A Next.js Gen AI chatbot clone entirely with v0.dev in less than a day's worth of effort.
 
-This repository will stay in sync with your deployed chats on [v0.dev](https://v0.dev).
-Any changes you make to your deployed app will be automatically pushed to this repository from [v0.dev](https://v0.dev).
+This project was built because I wanted to see how I could test out the AI SDK built by Vercel using V0 as a starting point.
 
-## Deployment
+Bennett AI is inspired from Claude, ChatGPT, Copilot, and other Gen AI chatbots.
 
-Your project is live at:
+## Project features:
+- Message streaming to display API response as it comes in
+- Message reasoning with auto expansion, collapse, and scrolling
+- Message response markdown styling using Tailwind Typography
+- Welcome screen component that loads a random welcome message on page load
+- Animations while response is "thinking"
 
-**[https://vercel.com/bennett-fraziers-projects/v0-claude-ai-clone](https://vercel.com/bennett-fraziers-projects/v0-claude-ai-clone)**
-
-## Build your app
-
-Continue building your app on:
-
-**[https://v0.dev/chat/projects/Og0eDHMaYNE](https://v0.dev/chat/projects/Og0eDHMaYNE)**
-
-## How It Works
-
-1. Create and modify your project using [v0.dev](https://v0.dev)
-2. Deploy your chats from the v0 interface
-3. Changes are automatically pushed to this repository
-4. Vercel deploys the latest version from this repository
+## Under the hood:
+- [Next.js 15](https://nextjs.org/)
+- [Shadcn](https://ui.shadcn.com/)
+- [Tailwind 4](https://tailwindcss.com/)
+- [AI SDK](https://sdk.vercel.ai/)
+- [Tailwind Typography](https://github.com/tailwindlabs/tailwindcss-typography)
+- [Anthropic API – Claude Sonnet v3.7](https://www.anthropic.com/api)
