@@ -1,11 +1,12 @@
 "use client"
-import { useState } from "react"
+import { useState, useRef } from "react"
 import type React from "react"
 import { SparkleIcon } from "./sparkle-icon"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { Send } from "lucide-react"
 import { useMediaQuery } from "@/hooks/use-mobile"
+import { useAutoResizeTextarea } from "@/hooks/use-auto-resize-textarea"
 
 // Welcome message presets - short, witty questions
 const welcomeMessages = [
@@ -30,6 +31,10 @@ export function WelcomeScreen({ input, handleInputChange, handleSubmit, isLoadin
   // Randomly select a welcome message on initial load
   const [welcomeIndex] = useState(() => Math.floor(Math.random() * welcomeMessages.length))
   const isMobile = useMediaQuery("(max-width: 768px)")
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
+
+  // Use the auto-resize textarea hook
+  useAutoResizeTextarea(textareaRef, input, 240)
 
   return (
     <div className="flex flex-col items-center justify-center h-full text-center pt-8 md:pt-12">
@@ -46,10 +51,11 @@ export function WelcomeScreen({ input, handleInputChange, handleSubmit, isLoadin
             <div className="relative">
               <div className="glass-input-container">
                 <Textarea
+                  ref={textareaRef}
                   value={input}
                   onChange={handleInputChange}
                   placeholder="Message Bennett..."
-                  className="min-h-[100px] resize-none text-base py-4 px-5 glass-input"
+                  className="min-h-[100px] max-h-[240px] resize-none text-base py-4 px-5 pr-16 glass-input auto-resize-textarea"
                   onKeyDown={(e) => {
                     if (e.key === "Enter" && !e.shiftKey) {
                       e.preventDefault()
@@ -64,7 +70,7 @@ export function WelcomeScreen({ input, handleInputChange, handleSubmit, isLoadin
               <Button
                 type="submit"
                 size="icon"
-                className="absolute bottom-4 right-4 h-10 w-10 rounded-full bg-primary hover:bg-primary/90 shadow-sm"
+                className="absolute bottom-4 right-4 h-10 w-10 rounded-full bg-primary hover:bg-primary/90 shadow-md hover:shadow-lg active:shadow-sm active:translate-y-0.5 transition-all duration-150"
                 disabled={isLoading || !input.trim()}
               >
                 <Send className="h-4 w-4" />

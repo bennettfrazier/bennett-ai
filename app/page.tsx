@@ -1,19 +1,13 @@
 "use client"
 import { useChat } from "ai/react"
 import type React from "react"
-
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Avatar } from "@/components/ui/avatar"
-import { Textarea } from "@/components/ui/textarea"
-import { ChevronDown, ChevronUp, Moon, Sun, Send, Loader2 } from "lucide-react"
+import { Card, CardContent } from "@/components/ui/card"
 import { useState, useRef, useEffect } from "react"
-import ReactMarkdown from "react-markdown"
-import remarkGfm from "remark-gfm"
-import { useTheme } from "@/components/theme-provider"
-import { SparkleIcon } from "@/components/sparkle-icon"
 import { WelcomeScreen } from "@/components/welcome-screen"
 import { useMediaQuery } from "@/hooks/use-mobile"
+import { Header } from "@/components/chat/header"
+import { MessageList } from "@/components/chat/message-list"
+import { InputForm } from "@/components/chat/input-form"
 
 export default function ChatPage() {
   const { messages, input, handleInputChange, handleSubmit, isLoading, error } = useChat()
@@ -28,7 +22,6 @@ export default function ChatPage() {
   const prevLoadingRef = useRef(isLoading)
   const prevMessagesLengthRef = useRef(messages.length)
   const lastMessageRef = useRef<string | null>(null)
-  const { theme, setTheme, resolvedTheme } = useTheme()
   const isMobile = useMediaQuery("(max-width: 768px)")
 
   // Initialize reasoning as expanded for streaming messages
@@ -216,11 +209,6 @@ export default function ChatPage() {
     }
   }
 
-  // Toggle theme
-  const toggleTheme = () => {
-    setTheme(resolvedTheme === "dark" ? "light" : "dark")
-  }
-
   // Set message reference with proper timing
   const setMessageRef = (el: HTMLDivElement | null, messageId: string) => {
     if (el) {
@@ -234,30 +222,7 @@ export default function ChatPage() {
   return (
     <div className="mobile-layout">
       {/* Fixed Header */}
-      <div className="mobile-header">
-        <Card className="border-none rounded-none shadow-none">
-          <CardHeader className="border-b bg-card py-3">
-            <CardTitle className="flex justify-between items-center text-base font-medium">
-              <div className="flex items-center gap-2">
-                <Avatar className="h-7 w-7 flex items-center justify-center">
-                  <SparkleIcon className="h-5 w-5 text-primary" />
-                </Avatar>
-                <span className="text-foreground">Bennett AI</span>
-              </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={toggleTheme}
-                className="rounded-full h-8 w-8 theme-toggle"
-                aria-label={`Switch to ${resolvedTheme === "dark" ? "light" : "dark"} mode`}
-              >
-                <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-                <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-              </Button>
-            </CardTitle>
-          </CardHeader>
-        </Card>
-      </div>
+      <Header />
 
       {/* Scrollable Content */}
       <div className="mobile-content" ref={contentRef}>
@@ -276,138 +241,21 @@ export default function ChatPage() {
               isLoading={isLoading}
             />
           ) : (
-            <div className="space-y-6 max-w-3xl mx-auto pb-10">
-              {messages.map((message) => {
-                const reasoning = getReasoningFromMessage(message)
-                const isStreaming = message.role === "assistant" && isMessageStreaming(message.id)
-                const isReasoningExpanded = expandedReasoning[message.id] || false
-
-                return (
-                  <div key={message.id} className="space-y-2">
-                    {message.role === "user" ? (
-                      // User message - right aligned, no avatar on mobile
-                      <div className="flex justify-end">
-                        <div className={`message-bubble user ${isMobile ? "" : "mr-10"}`}>
-                          <div className="text-sm">{message.content}</div>
-                        </div>
-                        {!isMobile && (
-                          <Avatar className="h-7 w-7 bg-secondary flex-shrink-0 flex items-center justify-center ml-3">
-                            <span className="text-xs font-medium text-secondary-foreground">You</span>
-                          </Avatar>
-                        )}
-                      </div>
-                    ) : (
-                      // Assistant message - full width on mobile, no avatar
-                      <div className="flex justify-start">
-                        <div className="flex items-start gap-3 w-full">
-                          {!isMobile && (
-                            <Avatar className="h-7 w-7 flex-shrink-0 flex items-center justify-center">
-                              <SparkleIcon className="h-4 w-4 text-primary" />
-                            </Avatar>
-                          )}
-
-                          <div className="message-bubble assistant">
-                            {/* Show reasoning toggle if reasoning exists */}
-                            {reasoning && (
-                              <div className="mb-2">
-                                <div
-                                  className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer hover:text-foreground mb-1"
-                                  onClick={() => toggleReasoning(message.id)}
-                                >
-                                  {isReasoningExpanded ? (
-                                    <>
-                                      <ChevronUp className="h-3 w-3" />
-                                      <span>Hide reasoning</span>
-                                    </>
-                                  ) : (
-                                    <>
-                                      <ChevronDown className="h-3 w-3" />
-                                      <span>Show reasoning</span>
-                                    </>
-                                  )}
-                                </div>
-
-                                <div
-                                  className={`reasoning-container overflow-hidden transition-all duration-300 ease-in-out ${
-                                    isReasoningExpanded ? "max-h-64 opacity-100" : "max-h-0 opacity-0"
-                                  }`}
-                                >
-                                  <div
-                                    ref={(el) => (reasoningRefs.current[message.id] = el)}
-                                    onScroll={() => handleReasoningScroll(message.id)}
-                                    className="pl-5 p-2 bg-muted border border-border rounded-lg text-xs text-muted-foreground overflow-auto max-h-64 reasoning-content"
-                                  >
-                                    <div className="markdown-content text-xs">
-                                      <ReactMarkdown remarkPlugins={[remarkGfm]}>{reasoning}</ReactMarkdown>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            )}
-
-                            {/* Show thinking animation while streaming */}
-                            {isStreaming ? (
-                              <div className="flex items-center gap-3 py-2">
-                                <div className="typing-indicator">
-                                  <span></span>
-                                  <span></span>
-                                  <span></span>
-                                </div>
-                                <span className="text-xs text-muted-foreground">Thinking...</span>
-                              </div>
-                            ) : (
-                              /* Show content when not streaming */
-                              <div className="mt-3" ref={(el) => setMessageRef(el, message.id)}>
-                                {/* Only render content once - prioritize message.content if it exists */}
-                                {message.content ? (
-                                  <div className="markdown-content text-sm">
-                                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.content}</ReactMarkdown>
-                                  </div>
-                                ) : (
-                                  /* If no direct content, look for text parts */
-                                  message.parts
-                                    ?.filter((part) => part.type === "text")
-                                    .map((part, index) => (
-                                      <div key={index} className="markdown-content text-sm">
-                                        <ReactMarkdown remarkPlugins={[remarkGfm]}>{part.text}</ReactMarkdown>
-                                      </div>
-                                    ))
-                                )}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )
-              })}
-
-              {/* Show a new message bubble with animation when loading and no assistant message is present */}
-              {isLoading && messages.length > 0 && messages[messages.length - 1].role === "user" && (
-                <div className="flex justify-start">
-                  <div className="flex items-start gap-3 w-full">
-                    {!isMobile && (
-                      <Avatar className="h-7 w-7 flex-shrink-0 flex items-center justify-center">
-                        <SparkleIcon className="h-4 w-4 text-primary" />
-                      </Avatar>
-                    )}
-                    <div className="message-bubble assistant">
-                      <div className="flex items-center gap-3">
-                        <div className="typing-indicator">
-                          <span></span>
-                          <span></span>
-                          <span></span>
-                        </div>
-                        <span className="text-xs text-muted-foreground">Thinking...</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              <div ref={messagesEndRef} />
-            </div>
+            <MessageList
+              messages={messages}
+              isLoading={isLoading}
+              completedMessages={completedMessages}
+              expandedReasoning={expandedReasoning}
+              toggleReasoning={toggleReasoning}
+              handleReasoningScroll={handleReasoningScroll}
+              messageRefs={messageRefs}
+              reasoningRefs={reasoningRefs}
+              messagesEndRef={messagesEndRef}
+              isMobile={isMobile}
+              getReasoningFromMessage={getReasoningFromMessage}
+              isMessageStreaming={isMessageStreaming}
+              setMessageRef={setMessageRef}
+            />
           )}
         </CardContent>
       </div>
@@ -417,35 +265,12 @@ export default function ChatPage() {
         <div className="mobile-footer">
           <Card className="border-none rounded-none shadow-none">
             <CardContent className="border-t bg-card p-4">
-              <form onSubmit={handleMessageSubmit} className="flex w-full gap-2 max-w-3xl mx-auto">
-                <div className="relative flex-1">
-                  <div className="glass-input-container">
-                    <Textarea
-                      value={input}
-                      onChange={handleInputChange}
-                      placeholder="Message Bennett..."
-                      className="min-h-[50px] resize-none glass-input"
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" && !e.shiftKey) {
-                          e.preventDefault()
-                          if (input.trim()) {
-                            const form = e.currentTarget.form
-                            if (form) form.requestSubmit()
-                          }
-                        }
-                      }}
-                    />
-                  </div>
-                  <Button
-                    type="submit"
-                    size="icon"
-                    className="absolute bottom-2 right-2 h-8 w-8 rounded-full bg-primary hover:bg-primary/90"
-                    disabled={isLoading || !input.trim()}
-                  >
-                    {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-                  </Button>
-                </div>
-              </form>
+              <InputForm
+                input={input}
+                handleInputChange={handleInputChange}
+                handleMessageSubmit={handleMessageSubmit}
+                isLoading={isLoading}
+              />
             </CardContent>
           </Card>
         </div>

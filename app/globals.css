@@ -33,6 +33,11 @@
     --ring: 160 84% 39%;
 
     --radius: 0.75rem;
+
+    /* Scrollbar colors */
+    --scrollbar-track: 0 0% 94%;
+    --scrollbar-thumb: 0 0% 80%;
+    --scrollbar-thumb-hover: 0 0% 70%;
   }
 
   .dark {
@@ -63,6 +68,11 @@
     --border: 224 16% 20%;
     --input: 224 16% 20%;
     --ring: 160 84% 39%;
+
+    /* Scrollbar colors for dark mode */
+    --scrollbar-track: 224 16% 14%;
+    --scrollbar-thumb: 224 10% 25%;
+    --scrollbar-thumb-hover: 224 10% 30%;
   }
 }
 
@@ -86,6 +96,67 @@
   }
 }
 
+/* Auto-resize textarea */
+.auto-resize-textarea {
+  overflow-y: hidden;
+  transition: height 0.1s ease;
+}
+
+.auto-resize-textarea.scrollable {
+  overflow-y: auto;
+}
+
+/* Custom scrollbar styles - applied to all scrollable elements */
+/* For WebKit browsers (Chrome, Safari, newer versions of Opera) */
+.scrollable::-webkit-scrollbar,
+.mobile-content::-webkit-scrollbar,
+.reasoning-content::-webkit-scrollbar,
+textarea.scrollable::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollable::-webkit-scrollbar-track,
+.mobile-content::-webkit-scrollbar-track,
+.reasoning-content::-webkit-scrollbar-track,
+textarea.scrollable::-webkit-scrollbar-track {
+  background-color: hsl(var(--scrollbar-track));
+  border-radius: 8px;
+}
+
+.scrollable::-webkit-scrollbar-thumb,
+.mobile-content::-webkit-scrollbar-thumb,
+.reasoning-content::-webkit-scrollbar-thumb,
+textarea.scrollable::-webkit-scrollbar-thumb {
+  background-color: hsl(var(--scrollbar-thumb));
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.scrollable::-webkit-scrollbar-thumb:hover,
+.mobile-content::-webkit-scrollbar-thumb:hover,
+.reasoning-content::-webkit-scrollbar-thumb:hover,
+textarea.scrollable::-webkit-scrollbar-thumb:hover {
+  background-color: hsl(var(--scrollbar-thumb-hover));
+}
+
+/* For Firefox */
+.scrollable,
+.mobile-content,
+.reasoning-content,
+textarea.scrollable {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--scrollbar-thumb)) hsl(var(--scrollbar-track));
+}
+
+/* Hide scrollbar when not needed */
+textarea:not(.scrollable)::-webkit-scrollbar {
+  display: none;
+}
+
+textarea:not(.scrollable) {
+  scrollbar-width: none;
+}
+
 /* Mobile-specific font sizing */
 @media screen and (-webkit-min-device-pixel-ratio: 2), screen and (min-resolution: 192dpi) {
   html {
@@ -104,6 +175,13 @@
 
 .mobile-header {
   flex: 0 0 auto; /* Don't grow, don't shrink, auto basis */
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  width: 100%;
+}
+\
+.mobile-content {  auto basis */
   position: sticky;
   top: 0;
   z-index: 10;
@@ -152,6 +230,35 @@
   background: rgba(30, 30, 35, 0.5);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
   border: 1px solid rgba(60, 60, 70, 0.5);
+}
+
+/* Add these styles to enhance the skeuomorphic effect of the submit button */
+/* Skeuomorphic submit button */
+.mobile-footer .glass-input-container button,
+.glass-input-container button {
+  background: linear-gradient(to bottom, hsl(var(--primary)), hsl(var(--primary) / 0.9));
+  border: 1px solid hsl(var(--primary) / 0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2), 0 1px 2px rgba(0, 0, 0, 0.1), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+  transform: translateY(0);
+  transition: all 0.15s ease;
+}
+
+.mobile-footer .glass-input-container button:hover,
+.glass-input-container button:hover {
+  background: linear-gradient(to bottom, hsl(var(--primary) / 0.95), hsl(var(--primary) / 0.85));
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.25), 0 2px 4px rgba(0, 0, 0, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+}
+
+.mobile-footer .glass-input-container button:active,
+.glass-input-container button:active {
+  background: linear-gradient(to top, hsl(var(--primary)), hsl(var(--primary) / 0.9));
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2), inset 0 1px 2px rgba(0, 0, 0, 0.1);
+  transform: translateY(1px);
+}
+
+/* Ensure text doesn't overlap with the button */
+.glass-input {
+  padding-right: 3.5rem !important;
 }
 
 /* Welcome message animation */
@@ -249,6 +356,16 @@
 
 .message-bubble.assistant {
   @apply bg-card border border-border shadow-sm text-card-foreground w-full;
+}
+
+/* Auto-resize textarea */
+.auto-resize-textarea {
+  overflow-y: hidden;
+  transition: height 0.1s ease;
+}
+
+.auto-resize-textarea.scrollable {
+  overflow-y: auto;
 }
 
 /* Markdown styling based on Google's style guide */
