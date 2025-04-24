@@ -226,7 +226,9 @@ export default function ChatPage() {
 
       {/* Scrollable Content */}
       <div className="mobile-content" ref={contentRef}>
-        <CardContent className="p-4 pt-6 md:p-6 md:pt-8 pb-20 bg-background h-full">
+        <CardContent
+          className={`p-4 md:p-6 pb-20 bg-background h-full ${showWelcomeScreen ? "flex items-center justify-center" : ""}`}
+        >
           {error && (
             <div className="p-3 mb-4 bg-destructive/10 text-destructive rounded-md text-sm">
               Error: {error.message || "Something went wrong"}

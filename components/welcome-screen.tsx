@@ -37,11 +37,11 @@ export function WelcomeScreen({ input, handleInputChange, handleSubmit, isLoadin
   useAutoResizeTextarea(textareaRef, input, 240)
 
   return (
-    <div className="flex flex-col items-center justify-center h-full text-center pt-8 md:pt-12">
-      <div className="max-w-xl w-full space-y-12">
-        <div className="flex items-center justify-center gap-3">
-          <SparkleIcon className="h-7 w-7 text-primary flex-shrink-0" />
-          <h1 className={`${isMobile ? "text-2xl" : "text-3xl"} font-semibold text-foreground font-heading`}>
+    <div className="flex flex-col items-center justify-center h-full text-center">
+      <div className="max-w-xl w-full space-y-6 md:space-y-8">
+        <div className={`flex ${isMobile ? "flex-col" : "flex-row"} items-center justify-center gap-3`}>
+          <SparkleIcon className={`h-7 w-7 text-primary flex-shrink-0 ${isMobile ? "mb-2" : ""}`} />
+          <h1 className={`${isMobile ? "text-xl" : "text-3xl"} font-semibold text-foreground font-heading`}>
             {welcomeMessages[welcomeIndex]}
           </h1>
         </div>
