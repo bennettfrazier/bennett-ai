@@ -28,7 +28,7 @@ const ThemeProviderContext = createContext<ThemeProviderState>(initialState)
 export function ThemeProvider({
   children,
   defaultTheme = "system",
-  storageKey = "theme", // Changed from "claude-theme" to "theme" to match ThemeScript
+  storageKey = "theme",
   ...props
 }: ThemeProviderProps) {
   const [theme, setTheme] = useState<Theme>(defaultTheme)
@@ -68,19 +68,17 @@ export function ThemeProvider({
     localStorage.setItem(storageKey, theme)
   }, [theme, mounted, storageKey])
 
-  // Prevent theme flash by hiding content until mounted
-  if (!mounted) {
-    // Don't render a script here anymore since we have ThemeScript
-    // Just return children with no visibility changes
-    return <>{children}</>
-  }
-
   const value = {
     theme,
     setTheme: (theme: Theme) => {
       setTheme(theme)
     },
     resolvedTheme,
+  }
+
+  // Return null until mounted to prevent flash
+  if (!mounted) {
+    return null
   }
 
   return (

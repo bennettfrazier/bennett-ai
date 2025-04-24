@@ -20,7 +20,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {/* ThemeScript will add the theme script to the head */}
         <ThemeScript />
       </head>
       <body className={`${outfit.variable} font-sans antialiased`}>
